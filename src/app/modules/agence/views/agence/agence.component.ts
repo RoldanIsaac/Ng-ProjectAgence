@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -30,6 +30,9 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { AgenceTableComponent } from '../../components/agence-table/agence-table.component';
 import { ActionBtnComponent } from '../../../../components/action-btn/action-btn.component';
 import { ReportService } from '../../../../report.service';
+import { ChartReportComponent } from '../../components/chart-report/chart-report.component';
+import { PieReportComponent } from '../../components/pie-report/pie-report.component';
+import { cols, sortables } from '../../../../core/constants/tables';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -51,19 +54,22 @@ const MATERIAL_MODULES = [
 @Component({
   selector: 'app-agence',
   imports: [
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     AgenceTableComponent,
     ActionBtnComponent,
+    ChartReportComponent,
+    PieReportComponent,
     MATERIAL_MODULES,
   ],
   templateUrl: './agence.component.html',
   styleUrl: './agence.component.css',
   providers: [provideNativeDateAdapter()],
 })
-export class AgenceComponent {
+export class AgenceComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+
   // Date range picker
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -72,21 +78,8 @@ export class AgenceComponent {
 
   consultors = new FormControl('');
 
-  cols: string[] = [
-    'Período',
-    'Receita Líquida',
-    'Custo Fixo',
-    'Comissão',
-    'Lucro',
-  ];
-  sortables: string[] = [
-    'Período',
-    'Receita Líquida',
-    'Custo Fixo',
-    'Comissão',
-    'Lucro',
-  ];
-
+  tableCols = cols;
+  tableSortables = sortables;
   tableData = signal<any[]>([]);
 
   consultants: string[] = [

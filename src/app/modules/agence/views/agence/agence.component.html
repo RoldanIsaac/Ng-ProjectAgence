@@ -83,9 +83,23 @@
     <ng-container *ngFor="let consultant of selectedConsultants()">
       <app-agence-table
         [data]="tableData()"
-        [displayedColumns]="cols"
-        [sortableColumns]="sortables"
+        [displayedColumns]="tableCols"
+        [sortableColumns]="tableSortables"
       ></app-agence-table>
+    </ng-container>
+  </div>
+
+  <!-- Chart Mode -->
+  <div class="w-full flex flex-col" *ngIf="isGenerated">
+    <ng-container>
+      <app-chart-report></app-chart-report>
+    </ng-container>
+  </div>
+
+  <!-- Pie Mode -->
+  <div class="w-full flex flex-col" *ngIf="isGenerated">
+    <ng-container>
+      <app-pie-report></app-pie-report>
     </ng-container>
   </div>
 </div>

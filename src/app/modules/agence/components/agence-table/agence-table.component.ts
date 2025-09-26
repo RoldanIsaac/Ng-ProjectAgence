@@ -29,19 +29,14 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 const MATERIAL_MODULES = [
-  MatSelectModule,
-  MatFabButton,
   MatIconButton,
   MatButtonModule,
   MatIconModule,
   MatTableModule,
   MatSortModule,
   MatPaginatorModule,
-  MatFormField,
   MatLabel,
   MatInput,
-  MatInputModule,
-  MatFormFieldModule,
 ];
 
 @Component({
@@ -57,28 +52,15 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
   private readonly _paginator = viewChild.required<MatPaginator>(MatPaginator);
 
   displayedColumns = input.required<string[]>();
-  ridesTotalColumns = signal<string[]>([]);
   sortableColumns = input.required<string[]>();
 
   data = input.required<any[]>();
   dataSource = new MatTableDataSource<any>();
 
-  // UI Features
-  positionOptions = positionOptions;
-  isIcon: boolean = false;
-  actionIconNames = [
-    'delete-02',
-    'dollar-circle',
-    'file-attachment',
-    'note',
-    'pencil-edit-02',
-  ];
-
-  constructor(private uiService: UiService) {
+  constructor() {
     effect(() => {
       if (this.data()) {
         this.dataSource.data = this.data();
-        console.log(this.data());
       }
     });
   }
@@ -94,10 +76,6 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
     this.dataSource.data = this.data();
     this.dataSource.sort = this._sort();
     this.dataSource.paginator = this._paginator();
-
-    // Registering Huge Icons
-    this.uiService.registerSvgIcons(this.actionIconNames);
-    this.isIcon = true;
   }
 
   /**
@@ -111,6 +89,4 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
   // ------------------------------------------------------------------------------------------
   // @ Public Methods
   // ------------------------------------------------------------------------------------------
-
-  uiColumnNames(columnString: string) {}
 }

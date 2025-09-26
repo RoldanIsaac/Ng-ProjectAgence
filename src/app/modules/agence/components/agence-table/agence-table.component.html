@@ -1,10 +1,4 @@
-<table
-  mat-table
-  matSort
-  [dataSource]="dataSource"
-  #generic
-  class="default-table table-generic"
->
+<table mat-table matSort [dataSource]="dataSource" #generic>
   @for (column of displayedColumns(); track $index) {
   <ng-container [matColumnDef]="column">
     <!-- Header -->

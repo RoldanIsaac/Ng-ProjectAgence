@@ -24,7 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { positionOptions } from '../../../../core/constants/positions';
 import { UiService } from '../../../../services/ui.service';
-import { Subject } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { AgenceTableComponent } from '../../components/agence-table/agence-table.component';
@@ -34,6 +34,7 @@ import { ChartReportComponent } from '../../components/chart-report/chart-report
 import { PieReportComponent } from '../../components/pie-report/pie-report.component';
 import { cols, sortables } from '../../../../core/constants/tables';
 import { TabButtonComponent } from '../../../../components/tab-button/tab-button.component';
+import { MockDataService } from '../../../../api/mock-data.service';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -106,36 +107,15 @@ export class AgenceComponent implements OnInit {
 
   consultors = new FormControl('');
 
-  consultants: string[] = [
-    'Aline Chastel Lima',
-    'Ana Paula Fontes Martins Chiodaro',
-    'Bruno Sousa Freitas',
-    'Carlos Cezar Girão de Arruda',
-    'Carlos Flávio Girão de Arruda',
-    'Carlos Henrique de Carvalho Filho',
-    'Felipe Chahad',
-    'Renato Marcus Pereira',
-    'Silvio Marães Ferreira',
-  ];
+  consultants = signal<string[]>([]);
   selectedConsultants = signal<string[]>([]);
 
   // UI Features
   positionOptions = positionOptions;
-  isIcon: boolean = false;
-  actionIconNames = [
-    // 'attachment-circle',
-    'calendar',
-    'clean',
-    'copy-01',
-    'delete-02',
-    'file-attachment',
-    'pencil-edit-02',
-    'plus',
-  ];
 
   constructor(
-    private uiService: UiService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private mockService: MockDataService
   ) {}
 
   // ------------------------------------------------------------------------------------------
@@ -145,10 +125,6 @@ export class AgenceComponent implements OnInit {
   ngOnInit(): void {
     this.dateRangeSubscriptions();
     this.getConsultants();
-
-    // Registering Huge Icons
-    this.uiService.registerSvgIcons(this.actionIconNames);
-    this.isIcon = true;
   }
 
   /**
@@ -178,12 +154,27 @@ export class AgenceComponent implements OnInit {
   }
 
   /**
-   *
+   * @description
+   * Fetching consultants
    */
   getConsultants(): void {
-    this.reportService
-      .getConsultants()
-      .subscribe((cs) => (this.consultants = cs as any));
+    // this.reportService
+    //   .getConsultants()
+    //   .subscribe((cs) => (this.consultants = cs as any));
+
+    this.mockService
+      .getUsuariosConSistemaFiltrado()
+      .pipe(take(1))
+      .subscribe({
+        next: (consultants) => {
+          this.consultants.set(
+            consultants.map((c) => c.no_usuario) as string[]
+          );
+        },
+        error: (err) => {
+          console.error('Error fetching consultants:', err);
+        },
+      });
   }
 
   // ------------------------------------------------------------------------------------------

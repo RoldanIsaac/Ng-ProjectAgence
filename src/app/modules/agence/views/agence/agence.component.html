@@ -62,7 +62,7 @@
           </span>
           }
         </mat-select-trigger>
-        @for (cs of consultants; track cs) {
+        @for (cs of consultants(); track cs) {
         <mat-option [value]="cs">{{ cs }}</mat-option>
         }
       </mat-select>

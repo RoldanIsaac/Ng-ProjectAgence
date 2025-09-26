@@ -1,0 +1,18 @@
+<div
+  class="shadow-md h-full flex flex-col gap-1 p-2 border-r border-gray-200 max-w-60"
+>
+  <!-- Navigation items -->
+  <ng-container *ngFor="let item of sideNavItems">
+    <a
+      routerLink="{{ item.url }}"
+      class="flex flex-row items-center text-gray-700 rounded-sm h-10 text-sm hover:text-teal-800 hover:font-medium hover:bg-teal-100 px-3"
+    >
+      {{ item.name }}
+      <mat-icon *ngIf="isIcon" svgIcon="home"></mat-icon>
+    </a>
+  </ng-container>
+
+  <div class="mt-auto p-2 border-t border-gray-200 text-center flex-shrink-0">
+    <p class="text-sm text-gray-500">&copy;2025 Agence</p>
+  </div>
+</div>

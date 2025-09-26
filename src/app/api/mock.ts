@@ -1,4 +1,8 @@
-import { Usuario, PermissaoSistema } from '../core/interfaces/common';
+import {
+  Usuario,
+  PermissaoSistema,
+  CaoSalario,
+} from '../core/interfaces/common';
 
 export const usuarios: Usuario[] = [
   {
@@ -155,5 +159,44 @@ export const permissaoSistema: PermissaoSistema[] = [
     in_ativo: 'S',
     co_usuario_atualizacao: 'ADMIN',
     dt_atualizacao: '2025-09-26 13:00:00',
+  },
+];
+
+export const caoSalarios: CaoSalario[] = [
+  {
+    co_usuario: 'edo.virgolim',
+    dt_alteracao: '2003-11-05',
+    brut_salario: 0,
+    liq_salario: 0,
+  },
+  {
+    co_usuario: 'carlos.arruda',
+    dt_alteracao: '2007-09-11',
+    brut_salario: 2683,
+    liq_salario: 2300,
+  },
+  {
+    co_usuario: 'anapaula.chiodaro',
+    dt_alteracao: '2007-09-11',
+    brut_salario: 2566,
+    liq_salario: 2200,
+  },
+  {
+    co_usuario: 'renato.pereira',
+    dt_alteracao: '2007-09-10',
+    brut_salario: 2566,
+    liq_salario: 2200,
+  },
+  {
+    co_usuario: 'fernanda.barbosa',
+    dt_alteracao: '2007-09-13',
+    brut_salario: 1750,
+    liq_salario: 1500,
+  },
+  {
+    co_usuario: 'carlos.carvalho',
+    dt_alteracao: '2007-04-11',
+    brut_salario: 2566,
+    liq_salario: 2200,
   },
 ];

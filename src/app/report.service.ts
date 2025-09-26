@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
-import { Usuario, Fatura, Os, Salario } from './core/interfaces/common';
+import { Usuario, Fatura, Os, CaoSalario } from './core/interfaces/common';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
@@ -19,8 +19,8 @@ export class ReportService {
     return this.http.get<Os[]>('/api/os');
   }
 
-  getSalarios(): Observable<Salario[]> {
-    return this.http.get<Salario[]>('/api/salarios');
+  getSalarios(): Observable<CaoSalario[]> {
+    return this.http.get<CaoSalario[]>('/api/salarios');
   }
 
   /**
@@ -83,13 +83,14 @@ export class ReportService {
         });
 
         // asignar custo_fixo por consultor desde salarios
-        const salarioMap = new Map<number, number>();
+        const salarioMap = new Map<string, number>();
         salarios.forEach((s) =>
           salarioMap.set(s.co_usuario, Number(s.brut_salario ?? 0))
         );
 
         const report = Array.from(reportMap.values()).map((r) => {
-          r.custo_fixo = salarioMap.get(r.co_usuario) ?? 0;
+          r.custo_fixo = 0;
+          //   r.custo_fixo = salarioMap.get(r.co_usuario) ?? 0;
           const lucro = r.receita_liquida - (r.custo_fixo + r.comissao_total);
           return {
             ...r,

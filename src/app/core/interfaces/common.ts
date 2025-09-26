@@ -56,7 +56,9 @@ export interface Os {
   co_usuario: number;
 }
 
-export interface Salario {
-  co_usuario: number;
+export interface CaoSalario {
+  co_usuario: string;
+  dt_alteracao: string;
   brut_salario: number;
+  liq_salario: number;
 }

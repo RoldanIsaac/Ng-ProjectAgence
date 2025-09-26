@@ -1,7 +1,11 @@
 // services/mock-data.service.ts
 import { Injectable } from '@angular/core';
-import { PermissaoSistema, Usuario } from '../core/interfaces/common';
-import { permissaoSistema, usuarios } from './mock';
+import {
+  CaoSalario,
+  PermissaoSistema,
+  Usuario,
+} from '../core/interfaces/common';
+import { caoSalarios, permissaoSistema, usuarios } from './mock';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -14,6 +18,10 @@ export class MockDataService {
 
   getUsuarios(): Observable<Usuario[]> {
     return of(usuarios);
+  }
+
+  getSalarios(): Observable<CaoSalario[]> {
+    return of(caoSalarios);
   }
 
   // Simula un JOIN entre las tablas por CO_USUARIO

@@ -86,6 +86,11 @@
         *ngFor="let consultant of selectedConsultants()"
         class="border-b border-gray-200 mb-3 hover:shadow-sm rounded-md"
       >
+        <div>
+          <h2 class="text-md font-semibold p-3 bg-gray-100 rounded-t-md">
+            Consultant: {{ consultant }}
+          </h2>
+        </div>
         <app-agence-table
           [data]="tableData()"
           [displayedColumns]="tableCols"

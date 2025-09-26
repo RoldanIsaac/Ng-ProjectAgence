@@ -19,7 +19,7 @@ import {
 } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { positionOptions } from '../../../../core/constants/positions';
@@ -100,17 +100,10 @@ export class AgenceComponent {
     'Renato Marcus Pereira',
     'Silvio Marães Ferreira',
   ];
-  selectedConsultants: string[] = [
-    'Aline Chastel Lima',
-    'Ana Paula Fontes Martins Chiodaro',
-    'Bruno Sousa Freitas',
-    'Carlos Cezar Girão de Arruda',
-    'Carlos Flávio Girão de Arruda',
-    'Carlos Henrique de Carvalho Filho',
-    'Felipe Chahad',
-    'Renato Marcus Pereira',
-    'Silvio Marães Ferreira',
-  ];
+  selectedConsultants = signal<string[]>([]);
+
+  modes = ['Relatório', 'Gráfico', 'Pizza'];
+  isGenerated: boolean = false;
 
   positionOptions = positionOptions;
 
@@ -136,18 +129,8 @@ export class AgenceComponent {
   // ------------------------------------------------------------------------------------------
 
   ngOnInit(): void {
-    this.range.valueChanges.subscribe((values) => {
-      if (values.start && values.end) {
-        // this.dateRangeEmit.emit({
-        //   startDate: format(values.start, 'yyyy-MM-dd'),
-        //   endDate: format(values.end, 'yyyy-MM-dd'),
-        // });
-      }
-    });
-
-    this.reportService
-      .getConsultants()
-      .subscribe((cs) => (this.consultants = cs as any));
+    this.dateRangeSubscriptions();
+    this.getConsultants();
 
     // Registering Huge Icons
     this.uiService.registerSvgIcons(this.actionIconNames);
@@ -166,16 +149,39 @@ export class AgenceComponent {
   // @ Public Methods
   // ------------------------------------------------------------------------------------------
 
-  onSelectConsultor(event: any) {
-    this.sele;
+  dateRangeSubscriptions(): void {
+    this.range.valueChanges.subscribe((values) => {
+      if (values.start && values.end) {
+        // this.dateRangeEmit.emit({
+        //   startDate: format(values.start, 'yyyy-MM-dd'),
+        //   endDate: format(values.end, 'yyyy-MM-dd'),
+        // });
+      }
+    });
   }
 
-  onGerarRelatorio() {
+  getConsultants(): void {
     this.reportService
-      .generateReportForMonth(this.selectedConsultants, this.month, this.year)
-      .subscribe((res) => {
-        // this.report = res.report;
-        // this.custoFixoMedio = res.custoFixoMedio;
-      });
+      .getConsultants()
+      .subscribe((cs) => (this.consultants = cs as any));
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // @ Action Methods
+  // ------------------------------------------------------------------------------------------
+
+  onSelectConsultor(event: MatSelectChange): void {
+    const filterValue = event.value;
+    this.selectedConsultants.set(filterValue);
+  }
+
+  onGerarRelatorio(mode: string) {
+    this.isGenerated = true;
+    // this.reportService
+    //   .generateReportForMonth(this.selectedConsultants(), this.month, this.year)
+    //   .subscribe((res) => {
+    //     // this.report = res.report;
+    //     // this.custoFixoMedio = res.custoFixoMedio;
+    //   });
   }
 }

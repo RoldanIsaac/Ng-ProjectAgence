@@ -14,10 +14,39 @@ import { Subject, takeUntil } from 'rxjs';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
+import {
+  MatFabButton,
+  MatIconButton,
+  MatButtonModule,
+} from '@angular/material/button';
+import {
+  MatFormField,
+  MatLabel,
+  MatFormFieldModule,
+} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
+const MATERIAL_MODULES = [
+  MatSelectModule,
+  MatFabButton,
+  MatIconButton,
+  MatButtonModule,
+  MatIconModule,
+  MatTableModule,
+  MatSortModule,
+  MatPaginatorModule,
+  MatFormField,
+  MatLabel,
+  MatInput,
+  MatInputModule,
+  MatFormFieldModule,
+];
 
 @Component({
   selector: 'app-agence-table',
-  imports: [CommonModule, MatTableModule, MatSortModule, MatPaginatorModule],
+  imports: [CommonModule, MATERIAL_MODULES],
   templateUrl: './agence-table.component.html',
   styleUrl: './agence-table.component.css',
 })
@@ -34,6 +63,8 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
   data = input.required<any[]>();
   dataSource = new MatTableDataSource<any>();
 
+  // UI Features
+  positionOptions = positionOptions;
   isIcon: boolean = false;
   actionIconNames = [
     'delete-02',
@@ -43,17 +74,13 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
     'pencil-edit-02',
   ];
 
-  positionOptions = positionOptions;
-
   constructor(private uiService: UiService) {
-    effect(
-      () => {
-        if (this.data()) {
-          this.dataSource.data = this.data();
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      if (this.data()) {
+        this.dataSource.data = this.data();
+        console.log(this.data());
+      }
+    });
   }
 
   // ------------------------------------------------------------------------------------------

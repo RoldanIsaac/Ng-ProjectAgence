@@ -82,13 +82,16 @@
   <div class="w-full flex flex-col" *ngIf="isGenerated()">
     <!-- Table Mode -->
     <ng-container *ngIf="isTableMode()">
-      <ng-container *ngFor="let consultant of selectedConsultants()">
+      <div
+        *ngFor="let consultant of selectedConsultants()"
+        class="border-b border-gray-200 mb-3 hover:shadow-sm rounded-md"
+      >
         <app-agence-table
           [data]="tableData()"
           [displayedColumns]="tableCols"
           [sortableColumns]="tableSortables"
         ></app-agence-table>
-      </ng-container>
+      </div>
     </ng-container>
 
     <!-- Chart Mode -->

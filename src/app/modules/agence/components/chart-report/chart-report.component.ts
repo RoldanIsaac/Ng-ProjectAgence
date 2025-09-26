@@ -5,7 +5,7 @@ import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-chart-report',
-  imports: [BaseChartDirective, NgCharts],
+  imports: [BaseChartDirective],
   templateUrl: './chart-report.component.html',
   styleUrl: './chart-report.component.css',
 })

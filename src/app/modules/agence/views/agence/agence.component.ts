@@ -82,7 +82,11 @@ export class AgenceComponent implements OnInit {
   // Table features
   tableCols = cols;
   tableSortables = sortables;
-  tableData = signal<any[]>([]);
+  tableData = signal<any[]>([
+    {
+      periodo: '',
+    },
+  ]);
 
   // Flags
   isGenerated = signal<boolean>(false);

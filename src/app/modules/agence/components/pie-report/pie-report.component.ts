@@ -1,10 +1,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ChartData } from 'chart.js';
 // import { currencyBRL } from '../format.utils';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-pie-report',
-  imports: [],
+  imports: [BaseChartDirective],
   templateUrl: './pie-report.component.html',
   styleUrl: './pie-report.component.css',
 })

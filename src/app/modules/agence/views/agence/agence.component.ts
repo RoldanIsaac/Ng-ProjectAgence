@@ -33,6 +33,7 @@ import { ReportService } from '../../../../report.service';
 import { ChartReportComponent } from '../../components/chart-report/chart-report.component';
 import { PieReportComponent } from '../../components/pie-report/pie-report.component';
 import { cols, sortables } from '../../../../core/constants/tables';
+import { TabButtonComponent } from '../../../../components/tab-button/tab-button.component';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -61,6 +62,7 @@ const MATERIAL_MODULES = [
     ActionBtnComponent,
     ChartReportComponent,
     PieReportComponent,
+    TabButtonComponent,
     MATERIAL_MODULES,
   ],
   templateUrl: './agence.component.html',
@@ -70,6 +72,28 @@ const MATERIAL_MODULES = [
 export class AgenceComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  // Tabs
+  selectedTab = signal<string>('consultor');
+  tabs = [
+    { value: 'consultor', label: 'Por Consultor' },
+    { value: 'client', label: 'Por Cliente' },
+  ];
+
+  // Table features
+  tableCols = cols;
+  tableSortables = sortables;
+  tableData = signal<any[]>([]);
+
+  // Flags
+  isGenerated = signal<boolean>(false);
+  isTableMode = signal<boolean>(true);
+  isChartMode = signal<boolean>(false);
+  isPieMode = signal<boolean>(false);
+
+  // Report modes
+  modes = ['Relatório', 'Gráfico', 'Pizza'];
+
+  // Forms
   // Date range picker
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -77,10 +101,6 @@ export class AgenceComponent implements OnInit {
   });
 
   consultors = new FormControl('');
-
-  tableCols = cols;
-  tableSortables = sortables;
-  tableData = signal<any[]>([]);
 
   consultants: string[] = [
     'Aline Chastel Lima',
@@ -95,11 +115,8 @@ export class AgenceComponent implements OnInit {
   ];
   selectedConsultants = signal<string[]>([]);
 
-  modes = ['Relatório', 'Gráfico', 'Pizza'];
-  isGenerated: boolean = false;
-
+  // UI Features
   positionOptions = positionOptions;
-
   isIcon: boolean = false;
   actionIconNames = [
     // 'attachment-circle',
@@ -142,6 +159,9 @@ export class AgenceComponent implements OnInit {
   // @ Public Methods
   // ------------------------------------------------------------------------------------------
 
+  /**
+   *
+   */
   dateRangeSubscriptions(): void {
     this.range.valueChanges.subscribe((values) => {
       if (values.start && values.end) {
@@ -153,6 +173,9 @@ export class AgenceComponent implements OnInit {
     });
   }
 
+  /**
+   *
+   */
   getConsultants(): void {
     this.reportService
       .getConsultants()
@@ -163,13 +186,27 @@ export class AgenceComponent implements OnInit {
   // @ Action Methods
   // ------------------------------------------------------------------------------------------
 
+  /**
+   *
+   */
   onSelectConsultor(event: MatSelectChange): void {
     const filterValue = event.value;
     this.selectedConsultants.set(filterValue);
   }
 
+  /**
+   *
+   */
   onGerarRelatorio(mode: string) {
-    this.isGenerated = true;
+    this.isGenerated.set(true);
+
+    // Setting modes
+    this.isTableMode.set(mode === 'Relatório');
+    this.isChartMode.set(mode === 'Gráfico');
+    this.isPieMode.set(mode === 'Pizza');
+
+    // Generating report
+
     // this.reportService
     //   .generateReportForMonth(this.selectedConsultants(), this.month, this.year)
     //   .subscribe((res) => {

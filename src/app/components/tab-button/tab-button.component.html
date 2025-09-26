@@ -1,0 +1,7 @@
+<div
+  class="cursor-pointer hover:bg-teal-100 hover:text-teal-800 hover:font-medium text-sm py-2 px-4 rounded-sm"
+  [ngClass]="{ 'bg-teal-100 text-teal-800 font-medium': isSelected }"
+  (click)="onClick()"
+>
+  {{ label }}
+</div>

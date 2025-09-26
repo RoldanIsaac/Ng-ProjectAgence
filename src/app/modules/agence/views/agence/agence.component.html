@@ -2,17 +2,18 @@
   <div
     class="flex flex-row justify-start items-center mb-4 border-b border-gray-200"
   >
-    <div class="hover:bg-blue-100 text-sm py-2 px-4 rounded-sm">
-      Por Consultor
-    </div>
-    <div class="hover:bg-blue-100 text-sm py-2 px-4 rounded-sm">
-      Por Cliente
-    </div>
+    <app-tab-button
+      *ngFor="let tab of tabs"
+      [label]="tab.label"
+      [isSelected]="selectedTab() === tab.value"
+      (onClickEmit)="selectedTab.set(tab.value)"
+    ></app-tab-button>
   </div>
 
   <!-- Filters -->
-
-  <div class="flex flex-col md:flex-row gap-4 mb-4">
+  <div
+    class="flex flex-col md:flex-row gap-4 mb-4 items-center border-b border-gray-200 pb-2"
+  >
     <!-- Select Date-->
     <mat-form-field>
       <mat-date-range-input
@@ -78,27 +79,25 @@
     </div>
   </div>
 
-  <!-- Agence Table Mode -->
-  <div class="w-full flex flex-col" *ngIf="isGenerated">
-    <ng-container *ngFor="let consultant of selectedConsultants()">
-      <app-agence-table
-        [data]="tableData()"
-        [displayedColumns]="tableCols"
-        [sortableColumns]="tableSortables"
-      ></app-agence-table>
+  <div class="w-full flex flex-col" *ngIf="isGenerated()">
+    <!-- Table Mode -->
+    <ng-container *ngIf="isTableMode()">
+      <ng-container *ngFor="let consultant of selectedConsultants()">
+        <app-agence-table
+          [data]="tableData()"
+          [displayedColumns]="tableCols"
+          [sortableColumns]="tableSortables"
+        ></app-agence-table>
+      </ng-container>
     </ng-container>
-  </div>
 
-  <!-- Chart Mode -->
-  <div class="w-full flex flex-col" *ngIf="isGenerated">
-    <ng-container>
+    <!-- Chart Mode -->
+    <ng-container *ngIf="isChartMode()">
       <app-chart-report></app-chart-report>
     </ng-container>
-  </div>
 
-  <!-- Pie Mode -->
-  <div class="w-full flex flex-col" *ngIf="isGenerated">
-    <ng-container>
+    <!-- Pie Mode -->
+    <ng-container *ngIf="isPieMode()">
       <app-pie-report></app-pie-report>
     </ng-container>
   </div>

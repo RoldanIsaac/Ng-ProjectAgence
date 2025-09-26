@@ -28,6 +28,8 @@ import { Subject } from 'rxjs';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { AgenceTableComponent } from '../../components/agence-table/agence-table.component';
+import { ActionBtnComponent } from '../../../../components/action-btn/action-btn.component';
+import { ReportService } from '../../../../report.service';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -53,6 +55,7 @@ const MATERIAL_MODULES = [
     ReactiveFormsModule,
     CommonModule,
     AgenceTableComponent,
+    ActionBtnComponent,
     MATERIAL_MODULES,
   ],
   templateUrl: './agence.component.html',
@@ -86,7 +89,18 @@ export class AgenceComponent {
 
   tableData = signal<any[]>([]);
 
-  names: string[] = [
+  consultants: string[] = [
+    'Aline Chastel Lima',
+    'Ana Paula Fontes Martins Chiodaro',
+    'Bruno Sousa Freitas',
+    'Carlos Cezar Girão de Arruda',
+    'Carlos Flávio Girão de Arruda',
+    'Carlos Henrique de Carvalho Filho',
+    'Felipe Chahad',
+    'Renato Marcus Pereira',
+    'Silvio Marães Ferreira',
+  ];
+  selectedConsultants: string[] = [
     'Aline Chastel Lima',
     'Ana Paula Fontes Martins Chiodaro',
     'Bruno Sousa Freitas',
@@ -112,17 +126,16 @@ export class AgenceComponent {
     'plus',
   ];
 
-  constructor(private _uiService: UiService) {}
+  constructor(
+    private uiService: UiService,
+    private reportService: ReportService
+  ) {}
 
   // ------------------------------------------------------------------------------------------
   // @ Lifecycle Hooks
   // ------------------------------------------------------------------------------------------
 
   ngOnInit(): void {
-    // Registering Huge Icons
-    this._uiService.registerSvgIcons(this.actionIconNames);
-    this.isIcon = true;
-
     this.range.valueChanges.subscribe((values) => {
       if (values.start && values.end) {
         // this.dateRangeEmit.emit({
@@ -131,6 +144,14 @@ export class AgenceComponent {
         // });
       }
     });
+
+    this.reportService
+      .getConsultants()
+      .subscribe((cs) => (this.consultants = cs as any));
+
+    // Registering Huge Icons
+    this.uiService.registerSvgIcons(this.actionIconNames);
+    this.isIcon = true;
   }
 
   /**
@@ -139,5 +160,22 @@ export class AgenceComponent {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // @ Public Methods
+  // ------------------------------------------------------------------------------------------
+
+  onSelectConsultor(event: any) {
+    this.sele;
+  }
+
+  onGerarRelatorio() {
+    this.reportService
+      .generateReportForMonth(this.selectedConsultants, this.month, this.year)
+      .subscribe((res) => {
+        // this.report = res.report;
+        // this.custoFixoMedio = res.custoFixoMedio;
+      });
   }
 }

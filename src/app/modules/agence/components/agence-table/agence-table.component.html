@@ -17,7 +17,11 @@
       *matCellDef="let item; let index = index"
       class="text-sm text-gray-700"
     >
-      {{ item[column] }}
+      @if (column === 'Período') {
+      {{ item["month"] }}/{{ item["year"] }}
+      } @else if (column === 'Receita Líquida') {
+      {{ item["receitaLiquida"] | brCurrency }}
+      }
     </td>
   </ng-container>
   }

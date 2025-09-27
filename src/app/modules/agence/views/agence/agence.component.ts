@@ -37,6 +37,7 @@ import { TabButtonComponent } from '../../../../components/tab-button/tab-button
 import { MockDataService } from '../../../../api/mock-data.service';
 import { format } from 'date-fns';
 import { dateFormatBr } from '../../../../core/constants/date';
+import { DateRange } from '../../../../core/interfaces/date';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -101,6 +102,7 @@ export class AgenceComponent implements OnInit {
   modes = ['Relatório', 'Gráfico', 'Pizza'];
 
   // Forms & Filters
+  consultorsFC = new FormControl('');
   consultors = signal<string[]>([]);
   selectedConsultors = signal<string[]>([]);
   // Date range picker
@@ -108,10 +110,13 @@ export class AgenceComponent implements OnInit {
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
-  dateRange = signal<{ from: string; to: string } | null>(null);
+  dateRange = signal<DateRange>({ from: '', to: '' });
 
   // UI Features
   positionOptions = positionOptions;
+
+  // Report data
+  reportsData = signal<any[]>([]);
 
   constructor(
     private reportService: ReportService,
@@ -172,6 +177,8 @@ export class AgenceComponent implements OnInit {
       .subscribe({
         next: (consultors) => {
           if (consultors?.length > 0) {
+            // Debug
+            // console.log(consultors);
             this.consultors.set(
               consultors.map((consultor) => consultor.no_usuario)
             );
@@ -206,13 +213,23 @@ export class AgenceComponent implements OnInit {
     this.isChartMode.set(mode === 'Gráfico');
     this.isPieMode.set(mode === 'Pizza');
 
-    // Generating report
+    // Validations
+    if (this.dateRange().from === '' || this.dateRange().to === '') {
+      console.warn('Date range is not set.');
+      return;
+    }
 
-    // this.reportService
-    //   .generateReportForMonth(this.selectedConsultants(), this.month, this.year)
-    //   .subscribe((res) => {
-    //     // this.report = res.report;
-    //     // this.custoFixoMedio = res.custoFixoMedio;
-    //   });
+    if (this.selectedConsultors().length === 0) {
+      console.warn('No consultors selected.');
+    }
+
+    // Generating report
+    this.reportService
+      .generateReport(this.selectedConsultors(), this.dateRange())
+      .subscribe((res) => {
+        console.log(res);
+        this.reportsData.set(res);
+        // this.custoFixoMedio = res.custoFixoMedio;
+      });
   }
 }

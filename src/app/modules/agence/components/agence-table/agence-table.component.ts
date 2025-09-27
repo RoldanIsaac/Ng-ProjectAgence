@@ -27,6 +27,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { BrCurrencyPipe } from '../../../../core/pipes/br-currency.pipe';
 
 const MATERIAL_MODULES = [
   MatIconButton,
@@ -41,7 +42,7 @@ const MATERIAL_MODULES = [
 
 @Component({
   selector: 'app-agence-table',
-  imports: [CommonModule, MATERIAL_MODULES],
+  imports: [CommonModule, BrCurrencyPipe, MATERIAL_MODULES],
   templateUrl: './agence-table.component.html',
   styleUrl: './agence-table.component.css',
 })

@@ -5,7 +5,7 @@ import {
   PermissaoSistema,
   Usuario,
 } from '../core/interfaces/common';
-import { caoSalarios, permissaoSistema, usuarios } from './mock';
+import { caoFaturas, caoSalarios, permissaoSistema, usuarios } from './mock';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -22,6 +22,10 @@ export class MockDataService {
 
   getSalarios(): Observable<CaoSalario[]> {
     return of(caoSalarios);
+  }
+
+  getFaturas(): Observable<any[]> {
+    return of(caoFaturas);
   }
 
   // Simula un JOIN entre las tablas por CO_USUARIO

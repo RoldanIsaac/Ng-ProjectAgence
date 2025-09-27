@@ -13,9 +13,9 @@ import { UiService } from '../../../services/ui.service';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
-  iconsUrl = 'icons/round-stroke';
+  iconsUrl = 'icons';
   isIcon: boolean = false;
-  actionIconNames = ['home', 'product-loading', 'security-check'];
+  actionIconNames = [];
 
   sideNavItems = sideNavItems;
 

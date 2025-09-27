@@ -40,17 +40,6 @@ export interface PermissaoSistema {
   dt_atualizacao: string;
 }
 
-export interface Fatura {
-  id: number;
-  co_os: number;
-  co_cliente: number;
-  co_sistema: number;
-  data_emissao: string;
-  valor: number;
-  total_imp_inc: number;
-  comissao_cn: number;
-}
-
 export interface Os {
   co_os: number;
   co_usuario: number;
@@ -61,4 +50,24 @@ export interface CaoSalario {
   dt_alteracao: string;
   brut_salario: number;
   liq_salario: number;
+}
+
+export interface Fatura {
+  co_fatura: number;
+  co_cliente: number;
+  co_sistema: number;
+  co_os: number;
+  num_nf: number;
+  total: number;
+  valor: number;
+  data_emissao: string;
+  corpo_nf: string;
+  comissao_cn: number;
+  total_imp_inc: number;
+}
+
+export interface ReceitaLiquida {
+  month: number;
+  year: number;
+  receitaLiquida: number;
 }

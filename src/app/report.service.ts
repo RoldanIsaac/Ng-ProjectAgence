@@ -1,10 +1,24 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin, map } from 'rxjs';
-import { Usuario, Fatura, Os, CaoSalario } from './core/interfaces/common';
+import { Observable, forkJoin, map, of } from 'rxjs';
+import {
+  Usuario,
+  Fatura,
+  Os,
+  CaoSalario,
+  ReceitaLiquida,
+} from './core/interfaces/common';
+import { DateRange } from './core/interfaces/date';
+import { DateUtilsService } from './services/date-utils.service';
+import { caoFaturas } from './api/mock';
+import { MockDataService } from './api/mock-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
+  private apiUrl = 'http://localhost:3000/faturas'; // tu endpoint JSON o API
+  dateUtils = inject(DateUtilsService);
+  mockService = inject(MockDataService);
+
   constructor(private http: HttpClient) {}
 
   getConsultants(): Observable<Usuario[]> {
@@ -24,86 +38,127 @@ export class ReportService {
   }
 
   /**
+   * Obtiene todas las facturas y calcula la receita líquida por mes
+   */
+  getReceitaLiquidaPorMes(): Observable<any[]> {
+    return this.http.get<Fatura[]>(this.apiUrl).pipe(
+      map((faturas) => {
+        // Agrupamos por mes-año
+        const resultado: Record<string, number> = {};
+
+        faturas.forEach((f) => {
+          const fecha = new Date(f.data_emissao);
+          const mesAno = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}`;
+
+          // Receita líquida = valor - (valor * impuesto%)
+          const receitaLiquida = f.valor - (f.valor * f.total_imp_inc) / 100;
+
+          if (!resultado[mesAno]) {
+            resultado[mesAno] = 0;
+          }
+          resultado[mesAno] += receitaLiquida;
+        });
+
+        // Lo convertimos en array [{ mes: '2007-01', receita: ... }]
+        return Object.entries(resultado).map(([mes, receita]) => ({
+          mes,
+          receita: receita.toFixed(2),
+        }));
+      })
+    );
+  }
+
+  /**
+   * @description
    * Genera el reporte por consultores filtrados para un mes de referencia.
    * month: 1-12, year: 4 dígitos
    */
-  generateReportForMonth(consultantIds: number[], month: number, year: number) {
-    return forkJoin({
-      faturas: this.getFaturas(),
-      os: this.getOs(),
-      salarios: this.getSalarios(),
-    }).pipe(
-      map(({ faturas, os, salarios }) => {
-        // filtrar faturas por mes/año y por consultores (atraves de OS)
-        const osMap = new Map<number, Os>();
-        os.forEach((o) => osMap.set(o.co_os, o));
+  generateReport(consultors: string[], dateRange: DateRange): Observable<any> {
+    // Get all months in the date range
+    const months = this.dateUtils.getMonthsInDateRange(dateRange);
 
-        // agrupar por consultor
-        const reportMap = new Map<
-          number,
-          {
-            co_usuario: number;
-            nome?: string;
-            total_valor: number; // sum VALOR raw
-            receita_liquida: number; // sum of VALOR*(1 - TOTAL_IMP_INC/100)
-            comissao_total: number;
-            custo_fixo: number; // from salarios
-          }
-        >();
+    const observables = consultors.map((consultor) => {
+      // Get all faturas for each consultor, by month
+      return this.getFaturasForConsultor(consultor).pipe(
+        map((consultorFaturas) => {
+          // Debug
+          // console.log(`Faturas for consultor ${consultor}:`, consultorFaturas);
+          const receitaLiquidas = this.getReceitaLiquidaByDate(
+            consultorFaturas,
+            months
+          );
 
-        faturas.forEach((f) => {
-          const dt = new Date(f.data_emissao);
-          if (dt.getMonth() + 1 !== month || dt.getFullYear() !== year) return;
+          // Debug
+          // console.log(
+          //   `Receita líquida for consultor ${consultor}:`,
+          //   receitaLiquidas
+          // );
 
-          const osObj = osMap.get(f.co_os);
-          if (!osObj) return;
-          const consultorId = osObj.co_usuario;
-          if (consultantIds.length > 0 && !consultantIds.includes(consultorId))
+          return { consultor, receitaLiquidas };
+        })
+      );
+    });
+
+    return forkJoin(observables);
+  }
+
+  getFaturasForConsultor(consultor: string): Observable<Fatura[]> {
+    return new Observable<Fatura[]>((subscriber) => {
+      this.mockService.getFaturas().subscribe({
+        next: (faturas) => {
+          if (!faturas) {
+            subscriber.next([]);
+            subscriber.complete();
             return;
+          }
 
-          const valor = Number(f.valor ?? 0);
-          const totalImp = Number(f.total_imp_inc ?? 0); // porcentaje
-          const comissaoPct = Number(f.comissao_cn ?? 0); // porcentaje
+          // Filtrar por consultor
+          const consultorFaturas = faturas.filter(
+            (fat) => fat.co_cliente !== consultor
+          );
 
-          const receita_liq = valor * (1 - totalImp / 100);
-          const comissao = receita_liq * (comissaoPct / 100);
+          subscriber.next(consultorFaturas);
+          subscriber.complete();
+        },
+        error: (err) => {
+          subscriber.error(err);
+        },
+      });
+    });
+  }
 
-          const prev = reportMap.get(consultorId) ?? {
-            co_usuario: consultorId,
-            total_valor: 0,
-            receita_liquida: 0,
-            comissao_total: 0,
-            custo_fixo: 0,
-          };
+  getReceitaLiquidaByDate(
+    faturas: Fatura[],
+    months: { month: number; year: number }[]
+  ): ReceitaLiquida[] {
+    const receitaLiquidas: ReceitaLiquida[] = [];
 
-          prev.total_valor += valor;
-          prev.receita_liquida += receita_liq;
-          prev.comissao_total += comissao;
-          reportMap.set(consultorId, prev);
-        });
+    months.forEach(({ month, year }) => {
+      // Debug
+      // console.log(`Processing ${month}/${year}`);
 
-        // asignar custo_fixo por consultor desde salarios
-        const salarioMap = new Map<string, number>();
-        salarios.forEach((s) =>
-          salarioMap.set(s.co_usuario, Number(s.brut_salario ?? 0))
-        );
+      let receitaLiquida = 0;
+      faturas.forEach((fat: Fatura) => {
+        // If the fatura is in the month and year
+        if (
+          !(
+            this.dateUtils.isMonthEqual(fat.data_emissao, month) &&
+            this.dateUtils.isYearEqual(fat.data_emissao, year)
+          )
+        ) {
+          receitaLiquida += fat.valor - (fat.valor * fat.total_imp_inc) / 100;
+        }
+      });
 
-        const report = Array.from(reportMap.values()).map((r) => {
-          r.custo_fixo = 0;
-          //   r.custo_fixo = salarioMap.get(r.co_usuario) ?? 0;
-          const lucro = r.receita_liquida - (r.custo_fixo + r.comissao_total);
-          return {
-            ...r,
-            lucro,
-          };
-        });
+      receitaLiquidas.push({
+        month,
+        year,
+        receitaLiquida: Number(receitaLiquida.toFixed(2)),
+      });
+    });
 
-        // calcular custo fixo medio (promedio) sobre consultores involucrados
-        const totalCusto = report.reduce((s, r) => s + r.custo_fixo, 0);
-        const custoFixoMedio = report.length ? totalCusto / report.length : 0;
-
-        return { report, custoFixoMedio };
-      })
-    );
+    return receitaLiquidas;
   }
 }

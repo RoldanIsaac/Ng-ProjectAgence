@@ -51,15 +51,15 @@
       <mat-label>Consultors</mat-label>
       <mat-select (selectionChange)="onSelectConsultor($event)" multiple>
         <mat-select-trigger>
-          {{consultors.value?.[0] || ''}}
-          @if ((consultors.value?.length || 0) > 1) {
+          {{consultorsFC.value?.[0] || ''}}
+          @if ((consultorsFC.value?.length || 0) > 1) {
           <span style="opacity: 0.75; font-size: 0.75em; line-height: 1">
-            (+{{ (consultors.value?.length || 0) - 1 }}
-            {{ consultors.value?.length === 2 ? "other" : "others" }})
+            (+{{ (consultorsFC.value?.length || 0) - 1 }}
+            {{ consultorsFC.value?.length === 2 ? "other" : "others" }})
           </span>
           }
         </mat-select-trigger>
-        @for (cs of consultores(); track cs) {
+        @for (cs of consultors(); track cs) {
         <mat-option [value]="cs">{{ cs }}</mat-option>
         }
       </mat-select>
@@ -80,16 +80,16 @@
     <!-- Table Mode -->
     <ng-container *ngIf="isTableMode()">
       <div
-        *ngFor="let consultant of selectedConsultors()"
+        *ngFor="let data of reportsData()"
         class="border-b border-gray-200 mb-3 hover:shadow-sm rounded-md"
       >
         <div>
           <h2 class="text-md font-semibold p-3 bg-gray-100 rounded-t-md">
-            Consultant: {{ consultant }}
+            Consultor: {{ data.consultor }}
           </h2>
         </div>
         <app-agence-table
-          [data]="tableData()"
+          [data]="data.receitaLiquidas"
           [displayedColumns]="tableCols"
           [sortableColumns]="tableSortables"
         ></app-agence-table>

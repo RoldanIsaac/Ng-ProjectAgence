@@ -10,100 +10,105 @@
     ></app-tab-button>
   </div>
 
-  <!-- Filters -->
-  <div
-    class="flex flex-col md:flex-row gap-4 mb-4 items-center border-b border-gray-200 pb-2"
-    *ngIf="selectedTab() === 'consultor'"
-  >
-    <!-- Select Date-->
-    <mat-form-field>
-      <mat-date-range-input
-        [formGroup]="range"
-        class="input mat-date-range-custom"
-        [formGroup]="range"
-        [rangePicker]="picker"
-      >
-        <input matStartDate formControlName="start" placeholder="Start date" />
-        <input matEndDate formControlName="end" placeholder="End date" />
-      </mat-date-range-input>
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker"
-        matTooltip="Select two dates in a range"
-        [matTooltipPosition]="positionOptions[2]"
-      >
-        <!-- <mat-icon
+  <div *ngIf="selectedTab() === 'consultor'">
+    <!-- Filters -->
+    <div
+      class="flex flex-col md:flex-row gap-4 mb-4 items-center border-b border-gray-200 pb-2"
+    >
+      <!-- Select Date-->
+      <mat-form-field>
+        <mat-date-range-input
+          [formGroup]="range"
+          class="input mat-date-range-custom"
+          [formGroup]="range"
+          [rangePicker]="picker"
+        >
+          <input
+            matStartDate
+            formControlName="start"
+            placeholder="Start date"
+          />
+          <input matEndDate formControlName="end" placeholder="End date" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+          matTooltip="Select two dates in a range"
+          [matTooltipPosition]="positionOptions[2]"
+        >
+          <!-- <mat-icon
         *ngIf="isIcon"
         matDatepickerToggleIcon
         svgIcon="calendar"
       ></mat-icon> -->
-      </mat-datepicker-toggle>
-      <mat-date-range-picker #picker></mat-date-range-picker>
-      @if (range.controls.start.hasError('matStartDateInvalid')) {
-      <mat-error>Invalid start date</mat-error>
-      } @if (range.controls.end.hasError('matEndDateInvalid')) {
-      <mat-error>Invalid end date</mat-error>
-      }
-    </mat-form-field>
-
-    <!-- Select Consultors -->
-    <mat-form-field>
-      <mat-label>Consultors</mat-label>
-      <mat-select (selectionChange)="onSelectConsultor($event)" multiple>
-        <mat-select-trigger>
-          {{consultorsFC.value?.[0] || ''}}
-          @if ((consultorsFC.value?.length || 0) > 1) {
-          <span style="opacity: 0.75; font-size: 0.75em; line-height: 1">
-            (+{{ (consultorsFC.value?.length || 0) - 1 }}
-            {{ consultorsFC.value?.length === 2 ? "other" : "others" }})
-          </span>
-          }
-        </mat-select-trigger>
-        @for (cs of consultors(); track cs) {
-        <mat-option [value]="cs">{{ cs }}</mat-option>
+        </mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+        @if (range.controls.start.hasError('matStartDateInvalid')) {
+        <mat-error>Invalid start date</mat-error>
+        } @if (range.controls.end.hasError('matEndDateInvalid')) {
+        <mat-error>Invalid end date</mat-error>
         }
-      </mat-select>
-    </mat-form-field>
+      </mat-form-field>
 
-    <!-- Select Mode -->
-    <div class="flex flex-row gap-2 items-center">
-      <span class="text-sm font-medium">Mode:</span>
-      <action-btn
-        *ngFor="let mode of modes"
-        [label]="mode"
-        (onClickEmit)="onGerarRelatorio(mode)"
-      ></action-btn>
-    </div>
-  </div>
+      <!-- Select Consultors -->
+      <mat-form-field>
+        <mat-label>Consultors</mat-label>
+        <mat-select (selectionChange)="onSelectConsultor($event)" multiple>
+          <mat-select-trigger>
+            {{consultorsFC.value?.[0] || ''}}
+            @if ((consultorsFC.value?.length || 0) > 1) {
+            <span style="opacity: 0.75; font-size: 0.75em; line-height: 1">
+              (+{{ (consultorsFC.value?.length || 0) - 1 }}
+              {{ consultorsFC.value?.length === 2 ? "other" : "others" }})
+            </span>
+            }
+          </mat-select-trigger>
+          @for (cs of consultors(); track cs) {
+          <mat-option [value]="cs">{{ cs }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-  <div class="w-full flex flex-col" *ngIf="isGenerated()">
-    <!-- Table Mode -->
-    <ng-container *ngIf="isTableMode()">
-      <div
-        *ngFor="let data of reportsData()"
-        class="border-b border-gray-200 mb-3 hover:shadow-sm rounded-md"
-      >
-        <div>
-          <h2 class="text-md font-semibold p-3 bg-gray-100 rounded-t-md">
-            Consultor: {{ data.consultor }}
-          </h2>
-        </div>
-        <app-agence-table
-          [data]="data.receitaLiquidas"
-          [displayedColumns]="tableCols"
-          [sortableColumns]="tableSortables"
-        ></app-agence-table>
+      <!-- Select Mode -->
+      <div class="flex flex-row gap-2 items-center">
+        <span class="text-sm font-medium">Mode:</span>
+        <action-btn
+          *ngFor="let mode of modes"
+          [label]="mode"
+          (onClickEmit)="onGerarRelatorio(mode)"
+        ></action-btn>
       </div>
-    </ng-container>
+    </div>
 
-    <!-- Chart Mode -->
-    <ng-container *ngIf="isChartMode()">
-      <app-chart-report></app-chart-report>
-    </ng-container>
+    <div class="w-full flex flex-col" *ngIf="isGenerated()">
+      <!-- Table Mode -->
+      <ng-container *ngIf="isTableMode()">
+        <div
+          *ngFor="let data of reportsData()"
+          class="border-b border-gray-200 mb-3 hover:shadow-sm rounded-md"
+        >
+          <div>
+            <h2 class="text-md font-semibold p-3 bg-gray-100 rounded-t-md">
+              Consultor: {{ data.consultor }}
+            </h2>
+          </div>
+          <app-agence-table
+            [data]="data.receitaLiquidas"
+            [displayedColumns]="tableCols"
+            [sortableColumns]="tableSortables"
+          ></app-agence-table>
+        </div>
+      </ng-container>
 
-    <!-- Pie Mode -->
-    <ng-container *ngIf="isPieMode()">
-      <app-pie-report></app-pie-report>
-    </ng-container>
+      <!-- Chart Mode -->
+      <ng-container *ngIf="isChartMode()">
+        <app-chart-report></app-chart-report>
+      </ng-container>
+
+      <!-- Pie Mode -->
+      <ng-container *ngIf="isPieMode()">
+        <app-pie-report></app-pie-report>
+      </ng-container>
+    </div>
   </div>
 </div>

@@ -38,6 +38,7 @@ import { MockDataService } from '../../../../api/mock-data.service';
 import { format } from 'date-fns';
 import { dateFormatBr } from '../../../../core/constants/date';
 import { DateRange } from '../../../../core/interfaces/date';
+import { tabs } from '../../../../core/constants/tabs';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -77,10 +78,7 @@ export class AgenceComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Tabs
-  tabs = [
-    { value: 'consultor', label: 'Por Consultor' },
-    { value: 'client', label: 'Por Cliente' },
-  ];
+  tabs = tabs;
   selectedTab = signal<string>('consultor');
 
   // Table features
@@ -206,8 +204,6 @@ export class AgenceComponent implements OnInit {
    *
    */
   onGerarRelatorio(mode: string) {
-    this.isGenerated.set(true);
-
     // Setting modes
     this.isTableMode.set(mode === 'Relatório');
     this.isChartMode.set(mode === 'Gráfico');
@@ -230,6 +226,8 @@ export class AgenceComponent implements OnInit {
         console.log(res);
         this.reportsData.set(res);
         // this.custoFixoMedio = res.custoFixoMedio;
+
+        this.isGenerated.set(true);
       });
   }
 }

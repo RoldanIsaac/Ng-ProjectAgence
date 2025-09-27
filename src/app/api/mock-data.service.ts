@@ -25,7 +25,7 @@ export class MockDataService {
   }
 
   // Simula un JOIN entre las tablas por CO_USUARIO
-  getUsuariosConSistemaFiltrado(): Observable<any[]> {
+  getConsultants(): Observable<any[]> {
     return of(
       usuarios
         .map((usuario) => {

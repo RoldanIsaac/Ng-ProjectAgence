@@ -13,6 +13,7 @@
   <!-- Filters -->
   <div
     class="flex flex-col md:flex-row gap-4 mb-4 items-center border-b border-gray-200 pb-2"
+    *ngIf="selectedTab() === 'consultor'"
   >
     <!-- Select Date-->
     <mat-form-field>
@@ -48,11 +49,7 @@
     <!-- Select Consultors -->
     <mat-form-field>
       <mat-label>Consultors</mat-label>
-      <mat-select
-        [formControl]="consultors"
-        (selectionChange)="onSelectConsultor($event)"
-        multiple
-      >
+      <mat-select (selectionChange)="onSelectConsultor($event)" multiple>
         <mat-select-trigger>
           {{consultors.value?.[0] || ''}}
           @if ((consultors.value?.length || 0) > 1) {
@@ -62,7 +59,7 @@
           </span>
           }
         </mat-select-trigger>
-        @for (cs of consultants(); track cs) {
+        @for (cs of consultores(); track cs) {
         <mat-option [value]="cs">{{ cs }}</mat-option>
         }
       </mat-select>
@@ -83,7 +80,7 @@
     <!-- Table Mode -->
     <ng-container *ngIf="isTableMode()">
       <div
-        *ngFor="let consultant of selectedConsultants()"
+        *ngFor="let consultant of selectedConsultors()"
         class="border-b border-gray-200 mb-3 hover:shadow-sm rounded-md"
       >
         <div>

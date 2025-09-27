@@ -35,6 +35,8 @@ import { PieReportComponent } from '../../components/pie-report/pie-report.compo
 import { cols, sortables } from '../../../../core/constants/tables';
 import { TabButtonComponent } from '../../../../components/tab-button/tab-button.component';
 import { MockDataService } from '../../../../api/mock-data.service';
+import { format } from 'date-fns';
+import { dateFormatBr } from '../../../../core/constants/date';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -74,11 +76,11 @@ export class AgenceComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Tabs
-  selectedTab = signal<string>('consultor');
   tabs = [
     { value: 'consultor', label: 'Por Consultor' },
     { value: 'client', label: 'Por Cliente' },
   ];
+  selectedTab = signal<string>('consultor');
 
   // Table features
   tableCols = cols;
@@ -98,17 +100,15 @@ export class AgenceComponent implements OnInit {
   // Report modes
   modes = ['Relatório', 'Gráfico', 'Pizza'];
 
-  // Forms
+  // Forms & Filters
+  consultors = signal<string[]>([]);
+  selectedConsultors = signal<string[]>([]);
   // Date range picker
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
-
-  consultors = new FormControl('');
-
-  consultants = signal<string[]>([]);
-  selectedConsultants = signal<string[]>([]);
+  dateRange = signal<{ from: string; to: string } | null>(null);
 
   // UI Features
   positionOptions = positionOptions;
@@ -122,6 +122,9 @@ export class AgenceComponent implements OnInit {
   // @ Lifecycle Hooks
   // ------------------------------------------------------------------------------------------
 
+  /**
+   * On Init
+   */
   ngOnInit(): void {
     this.dateRangeSubscriptions();
     this.getConsultants();
@@ -140,15 +143,16 @@ export class AgenceComponent implements OnInit {
   // ------------------------------------------------------------------------------------------
 
   /**
+   * @description
    *
    */
   dateRangeSubscriptions(): void {
     this.range.valueChanges.subscribe((values) => {
       if (values.start && values.end) {
-        // this.dateRangeEmit.emit({
-        //   startDate: format(values.start, 'yyyy-MM-dd'),
-        //   endDate: format(values.end, 'yyyy-MM-dd'),
-        // });
+        this.dateRange.set({
+          from: format(values.start, dateFormatBr),
+          to: format(values.end, dateFormatBr),
+        });
       }
     });
   }
@@ -163,13 +167,15 @@ export class AgenceComponent implements OnInit {
     //   .subscribe((cs) => (this.consultants = cs as any));
 
     this.mockService
-      .getUsuariosConSistemaFiltrado()
+      .getConsultants()
       .pipe(take(1))
       .subscribe({
-        next: (consultants) => {
-          this.consultants.set(
-            consultants.map((c) => c.no_usuario) as string[]
-          );
+        next: (consultors) => {
+          if (consultors?.length > 0) {
+            this.consultors.set(
+              consultors.map((consultor) => consultor.no_usuario)
+            );
+          }
         },
         error: (err) => {
           console.error('Error fetching consultants:', err);
@@ -186,7 +192,7 @@ export class AgenceComponent implements OnInit {
    */
   onSelectConsultor(event: MatSelectChange): void {
     const filterValue = event.value;
-    this.selectedConsultants.set(filterValue);
+    this.selectedConsultors.set(filterValue);
   }
 
   /**

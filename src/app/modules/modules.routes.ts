@@ -13,6 +13,10 @@ export const routes: Routes = [
     component: DashboardComponent,
   },
   {
+    path: 'dashboard',
+    component: DashboardComponent,
+  },
+  {
     path: 'agence',
     component: AgenceComponent,
   },

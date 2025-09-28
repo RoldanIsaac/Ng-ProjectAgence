@@ -5,30 +5,30 @@
       <div class="inline-flex items-center gap-3">
         <span
           class="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-semibold"
-          >Prueba técnica</span
+          >Interfaz</span
         >
-        <span class="text-sm text-gray-500">Interfaz • Tailwind • Angular</span>
+        <span class="text-sm text-gray-500"> Tailwind • Angular</span>
       </div>
 
       <h1
         class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-gray-900"
       >
-        Bienvenido a <span class="text-teal-600">AGENCE</span>
+        Bienvenido, <span class="text-teal-600">AGENCE</span> Prueba Técnica
       </h1>
 
       <p class="text-gray-600 text-base sm:text-lg">
         Esta es una solución a la prueba técnica. Puede navegar por las
-        secciones del menú lateral, así como verficiar la adaptabilidad en
+        secciones del menú lateral, así como verificar la adaptabilidad en
         móviles y escritorio.
       </p>
 
       <div class="flex flex-wrap gap-3">
         <a
           class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-teal-600 text-white text-sm font-medium shadow hover:bg-teal-700 transition"
-          href="#"
+          href="https://github.com/RoldanIsaac/Ng-ProjectAgence"
           role="button"
         >
-          Ver demo
+          Ver Repositorio
           <svg
             class="w-4 h-4"
             fill="none"
@@ -99,13 +99,13 @@
               Resumen de la prueba
             </h3>
             <p class="text-sm text-gray-500 mt-1">
-              Entrega rápida, código claro y componentes reutilizables.
+              Tiempo en desarrollo: 21.5h. Entrega 9/28/2025.
             </p>
           </div>
         </div>
 
         <ul class="mt-6 space-y-3 text-sm text-gray-700">
-          <li class="flex items-start gap-3">
+          <li *ngFor="let feature of features" class="flex items-start gap-3">
             <svg
               class="w-5 h-5 mt-1 text-teal-500"
               fill="none"
@@ -119,39 +119,7 @@
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            <span>Navbar responsive con toggle integrado.</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <svg
-              class="w-5 h-5 mt-1 text-teal-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4"
-              />
-            </svg>
-            <span>Sidebar que ocupa toda la altura del layout.</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <svg
-              class="w-5 h-5 mt-1 text-teal-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 7h18M3 12h18M3 17h18"
-              />
-            </svg>
-            <span>Componentes listos para pruebas y validación.</span>
+            <span>{{ feature }}</span>
           </li>
         </ul>
 
@@ -170,6 +138,6 @@
   </div>
 
   <div class="mt-12 text-center text-gray-500 text-sm">
-    <span>Hecho por Orlando — Prueba técnica</span>
+    <span>Hecho por Orlando Llamos — Prueba técnica</span>
   </div>
 </section>

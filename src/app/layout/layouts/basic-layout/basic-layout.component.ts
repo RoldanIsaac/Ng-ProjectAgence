@@ -10,7 +10,6 @@ import { NavbarComponent } from '../../components/navbar/navbar.component';
 @Component({
   selector: 'app-basic-layout',
   imports: [
-    AsyncPipe,
     MatIconModule,
     RouterOutlet,
     SidebarComponent,

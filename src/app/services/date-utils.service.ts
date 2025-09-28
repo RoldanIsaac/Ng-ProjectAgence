@@ -5,13 +5,12 @@ import { DateRange } from '../core/interfaces/date';
   providedIn: 'root',
 })
 export class DateUtilsService {
-  getMonthsInDateRange(dateRange: {
-    from: string;
-    to: string;
-  }): { month: number; year: number }[] {
+  getMonthsInDateRange(
+    dateRange: DateRange
+  ): { month: number; year: number }[] {
     const parseDate = (dateStr: string): Date => {
       const [day, month, year] = dateStr.split('/').map(Number);
-      return new Date(year, month - 1, day); // month - 1 porque en JS enero=0
+      return new Date(year, month - 1, day);
     };
 
     const fromDate = parseDate(dateRange.from);
@@ -19,7 +18,6 @@ export class DateUtilsService {
 
     const months: { month: number; year: number }[] = [];
 
-    // Normalizamos al primer día del mes
     let current = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
     const end = new Date(toDate.getFullYear(), toDate.getMonth(), 1);
 
@@ -29,28 +27,21 @@ export class DateUtilsService {
         year: current.getFullYear(),
       });
 
-      // Avanzar al siguiente mes
       current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
     }
 
     return months;
   }
+
   isMonthEqual(dateString: string, month: number): boolean {
-    // dateString esperado en formato 'YYYY-MM-DD'
     const date = new Date(dateString);
-
-    // En JavaScript getMonth() devuelve 0 = Enero, 11 = Diciembre
     const monthFromDate = date.getMonth() + 1;
-
     return monthFromDate === month;
   }
 
   isYearEqual(dateString: string, year: number): boolean {
-    // dateString esperado en formato 'YYYY-MM-DD'
     const date = new Date(dateString);
-
     const yearFromDate = date.getFullYear();
-
     return yearFromDate === year;
   }
 }

@@ -1,35 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  MatButtonModule,
-  MatFabButton,
-  MatIconButton,
-} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
   MatFormField,
   MatFormFieldModule,
   MatLabel,
 } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { positionOptions } from '../../../../core/constants/positions';
-import { UiService } from '../../../../services/ui.service';
 import { Subject, take } from 'rxjs';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { AgenceTableComponent } from '../../components/agence-table/agence-table.component';
 import { ActionBtnComponent } from '../../../../components/action-btn/action-btn.component';
-import { ReportService } from '../../../../report.service';
 import { ChartReportComponent } from '../../components/chart-report/chart-report.component';
 import { PieReportComponent } from '../../components/pie-report/pie-report.component';
 import { cols, sortables } from '../../../../core/constants/tables';
@@ -39,20 +31,16 @@ import { format } from 'date-fns';
 import { dateFormatBr } from '../../../../core/constants/date';
 import { DateRange } from '../../../../core/interfaces/date';
 import { tabs } from '../../../../core/constants/tabs';
+import { ReportService } from '../../../../services/report.service';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
   MatDatepickerModule,
   MatTooltipModule,
-  MatFabButton,
-  MatIconButton,
   MatButtonModule,
-  MatIconModule,
   MatTableModule,
   MatFormField,
   MatLabel,
-  MatInput,
-  MatInputModule,
   MatFormFieldModule,
   MatButtonToggleModule,
 ];
@@ -74,7 +62,7 @@ const MATERIAL_MODULES = [
   styleUrl: './agence.component.css',
   providers: [provideNativeDateAdapter()],
 })
-export class AgenceComponent implements OnInit {
+export class AgenceComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Tabs
@@ -170,7 +158,7 @@ export class AgenceComponent implements OnInit {
     //   .subscribe((cs) => (this.consultants = cs as any));
 
     this.mockService
-      .getConsultants()
+      .getConsultors()
       .pipe(take(1))
       .subscribe({
         next: (consultors) => {
@@ -225,7 +213,6 @@ export class AgenceComponent implements OnInit {
       .subscribe((res) => {
         console.log(res);
         this.reportsData.set(res);
-        // this.custoFixoMedio = res.custoFixoMedio;
 
         this.isGenerated.set(true);
       });

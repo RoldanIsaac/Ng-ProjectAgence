@@ -71,3 +71,34 @@ export interface ReceitaLiquida {
   year: number;
   receitaLiquida: number;
 }
+
+export interface Comissao {
+  month: number;
+  year: number;
+  comissao: number;
+}
+
+export interface OS {
+  co_os: number;
+  nu_os: number;
+  co_sistema: number;
+  co_usuario: string;
+  co_arquitetura: number;
+  ds_os: string;
+  ds_caracteristica: string | null;
+  ds_requisito: string | null;
+  dt_inicio: string | null;
+  dt_fim: string | null;
+  co_status: number;
+  diretoria_sol: string | null;
+  dt_sol: string | null;
+  nu_tel_sol: string | null;
+  ddd_tel_sol: string | null;
+  nu_tel_sol2: string | null;
+  ddd_tel_sol2: string | null;
+  usuario_sol: string | null;
+  dt_imp: string | null;
+  dt_garantia: string | null;
+  co_email: string | null;
+  co_os_prospect_rel: string | null;
+}

@@ -4,40 +4,23 @@ import {
   input,
   OnDestroy,
   OnInit,
-  signal,
   viewChild,
 } from '@angular/core';
-import { UiService } from '../../../../services/ui.service';
-import { positionOptions } from '../../../../core/constants/positions';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
-import {
-  MatFabButton,
-  MatIconButton,
-  MatButtonModule,
-} from '@angular/material/button';
-import {
-  MatFormField,
-  MatLabel,
-  MatFormFieldModule,
-} from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInput, MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { BrCurrencyPipe } from '../../../../core/pipes/br-currency.pipe';
 
 const MATERIAL_MODULES = [
-  MatIconButton,
   MatButtonModule,
   MatIconModule,
   MatTableModule,
   MatSortModule,
   MatPaginatorModule,
-  MatLabel,
-  MatInput,
 ];
 
 @Component({

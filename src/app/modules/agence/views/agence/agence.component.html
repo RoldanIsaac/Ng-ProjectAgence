@@ -37,10 +37,10 @@
           [matTooltipPosition]="positionOptions[2]"
         >
           <!-- <mat-icon
-        *ngIf="isIcon"
-        matDatepickerToggleIcon
-        svgIcon="calendar"
-      ></mat-icon> -->
+                *ngIf="isIcon"
+                matDatepickerToggleIcon
+                svgIcon="calendar"
+            ></mat-icon> -->
         </mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
         @if (range.controls.start.hasError('matStartDateInvalid')) {
@@ -93,7 +93,7 @@
             </h2>
           </div>
           <app-agence-table
-            [data]="data.receitaLiquidas"
+            [data]="data.info"
             [displayedColumns]="tableCols"
             [sortableColumns]="tableSortables"
           ></app-agence-table>

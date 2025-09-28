@@ -21,6 +21,9 @@
       {{ item["month"] }}/{{ item["year"] }}
       } @else if (column === 'Receita Líquida') {
       {{ item["receitaLiquida"] | brCurrency }}
+
+      } @else if (column === 'Comissão') {
+      {{ item["comissao"] | brCurrency }}
       }
     </td>
   </ng-container>

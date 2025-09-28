@@ -107,7 +107,7 @@
 
       <!-- Pie Mode -->
       <ng-container *ngIf="isPieMode()">
-        <app-pie-report></app-pie-report>
+        <app-pie-report [data]="reportsData()"></app-pie-report>
       </ng-container>
     </div>
   </div>

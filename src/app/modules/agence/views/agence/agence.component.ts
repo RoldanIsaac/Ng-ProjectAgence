@@ -211,7 +211,8 @@ export class AgenceComponent implements OnInit, OnDestroy {
     this.reportService
       .generateReport(this.selectedConsultors(), this.dateRange())
       .subscribe((res) => {
-        console.log(res);
+        // Debug
+        // console.log(res);
         this.reportsData.set(res);
         this.isGenerated.set(true);
       });

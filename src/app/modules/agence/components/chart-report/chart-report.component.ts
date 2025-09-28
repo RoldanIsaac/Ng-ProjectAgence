@@ -20,13 +20,49 @@ import {
 })
 export class ChartReportComponent {
   chartOptions: Highcharts.Options = {
+    title: {
+      text: 'Performance Comercial',
+    },
+    xAxis: {
+      categories: [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+      ],
+      title: {
+        text: 'Meses',
+      },
+    },
+    yAxis: {
+      title: {
+        text: 'Valor',
+      },
+    },
     series: [
       {
-        data: [1, 2, 3],
         type: 'bar',
+        name: 'Ventas',
+        data: [10, 15, 12, 20, 18, 25, 22, 17, 19, 23, 21, 30],
       },
     ],
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          enabled: true,
+        },
+      },
+    },
   };
+
   chartConstructor: ChartConstructorType = 'chart';
   updateFlag: boolean = false;
   oneToOneFlag: boolean = true;

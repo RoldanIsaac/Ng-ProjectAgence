@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect, input } from '@angular/core';
 import {
   HighchartsChartComponent,
   ChartConstructorType,
@@ -19,10 +19,32 @@ import {
   styleUrl: './pie-report.component.css',
 })
 export class PieReportComponent {
+  data = input.required<any[]>();
+
+  constructor() {
+    effect(() => {
+      if (this.data()) {
+        console.log(this.data());
+      }
+    });
+  }
+
   chartOptions: Highcharts.Options = {
+    title: {
+      text: 'Participacao na Receita Liquida',
+    },
     series: [
       {
-        data: [1, 2, 3],
+        data: [
+          { name: 'Carlos Flavio Girao de Arruda', y: 5 },
+          { name: 'Mario Silvestri Filho', y: 4 },
+          { name: 'Carlos Henrique de Carvalho', y: 1 },
+        ],
+        dataLabels: {
+          enabled: true, // activa las etiquetas
+          format: '{point.name}: {point.y}', // formato de la etiqueta
+        },
+
         type: 'pie',
       },
     ],

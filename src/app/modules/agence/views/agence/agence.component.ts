@@ -213,7 +213,6 @@ export class AgenceComponent implements OnInit, OnDestroy {
       .subscribe((res) => {
         console.log(res);
         this.reportsData.set(res);
-
         this.isGenerated.set(true);
       });
   }

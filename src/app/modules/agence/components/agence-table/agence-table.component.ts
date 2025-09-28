@@ -34,10 +34,8 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
 
   private readonly _sort = viewChild.required<MatSort>(MatSort);
   private readonly _paginator = viewChild.required<MatPaginator>(MatPaginator);
-
   displayedColumns = input.required<string[]>();
   sortableColumns = input.required<string[]>();
-
   data = input.required<any[]>();
   dataSource = new MatTableDataSource<any>();
 
@@ -73,4 +71,13 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
   // ------------------------------------------------------------------------------------------
   // @ Public Methods
   // ------------------------------------------------------------------------------------------
+
+  getTotal(column: string): number {
+    return this.dataSource.data
+      .map((item) => {
+        const value = Number(item[column]) || 0;
+        return value;
+      })
+      .reduce((acc, val) => acc + val, 0);
+  }
 }

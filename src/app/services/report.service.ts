@@ -8,6 +8,7 @@ import {
   CaoSalario,
   ReceitaLiquida,
   Comissao,
+  FaturaEnriched,
 } from '../core/interfaces/common';
 import { DateRange } from '../core/interfaces/date';
 import { DateUtilsService } from '../services/date-utils.service';
@@ -43,8 +44,7 @@ export class ReportService {
 
   /**
    * @description
-   * Genera el reporte por consultores filtrados para un mes de referencia.
-   * month: 1-12, year: 4 dígitos
+   * Genera el reporte por consultores filtrados para un rango de fecha.
    */
   generateReport(consultors: string[], dateRange: DateRange): Observable<any> {
     // Get all months in the date range
@@ -53,9 +53,9 @@ export class ReportService {
     const observables = consultors.map((consultor) => {
       // Get all faturas for each consultor, by month
       return this.getFaturasForConsultor(consultor).pipe(
-        map((consultorFaturas) => {
+        map((consultorFaturas: FaturaEnriched[]) => {
           // Debug
-          // console.log(`Faturas for consultor ${consultor}:`, consultorFaturas);
+          console.log(`Faturas for consultor ${consultor}:`, consultorFaturas);
 
           // Receta liquida
           const receitaLiquidas = this.getReceitaLiquidaByDate(
@@ -81,7 +81,11 @@ export class ReportService {
               month: m.month,
               year: m.year,
               receitaLiquida: receita,
+              // Tomamos el salario fijo de la primera factura (es el mismo para todas)
+              salarioFixo: consultorFaturas[0]?.salarioFixo ?? 0,
               comissao: comissao,
+              lucro:
+                receita - (consultorFaturas[0]?.salarioFixo ?? 0 + comissao),
             };
           });
 
@@ -101,17 +105,27 @@ export class ReportService {
    * @description
    *
    */
-  getFaturasForConsultor(consultor: string): Observable<Fatura[]> {
-    return zip([this.mockService.getFaturas(), this.mockService.getOS()]).pipe(
-      map(([faturas, ordens]) => {
-        if (!faturas || !ordens) return [];
+  getFaturasForConsultor(consultor: string): Observable<FaturaEnriched[]> {
+    return zip([
+      this.mockService.getFaturas(),
+      this.mockService.getOS(),
+      this.mockService.getSalarios(),
+    ]).pipe(
+      map(([faturas, ordens, salarios]) => {
+        if (!faturas || !ordens || !salarios) return [];
 
         // Enriquecer facturas con consultor
         const enriched = faturas.map((fat) => {
           const os = ordens.find((orden) => orden.co_os === fat.co_os);
+
+          const salario = os
+            ? salarios.find((salario) => salario.co_usuario === os.co_usuario)
+            : null;
+
           return {
             ...fat,
             co_usuario: os ? os.co_usuario : null,
+            salarioFixo: salario ? salario.brut_salario : 0,
           };
         });
 

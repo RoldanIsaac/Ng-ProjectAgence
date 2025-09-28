@@ -66,6 +66,11 @@ export interface Fatura {
   total_imp_inc: number;
 }
 
+export interface FaturaEnriched extends Fatura {
+  co_usuario: string | null; // del OS
+  salarioFixo: number; // del salário
+}
+
 export interface ReceitaLiquida {
   month: number;
   year: number;

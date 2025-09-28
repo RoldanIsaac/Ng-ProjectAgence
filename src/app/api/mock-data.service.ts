@@ -11,7 +11,7 @@ import {
   caoSalarios,
   permissaoSistema,
   usuarios,
-} from './mock';
+} from './mock-data';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -44,11 +44,11 @@ export class MockDataService {
       usuarios
         .map((usuario) => {
           const sistemas = permissaoSistema.filter(
-            (sistema) => sistema.co_usuario === usuario.co_usuario
-            //  &&
-            //   sistema.co_sistema === 1 &&
-            //   sistema.in_ativo === 'S' &&
-            //   [0, 1, 2].includes(sistema.co_tipo_usuario)
+            (sistema) =>
+              sistema.co_usuario === usuario.co_usuario &&
+              sistema.co_sistema === 1 &&
+              sistema.in_ativo === 'S' &&
+              [0, 1, 2].includes(sistema.co_tipo_usuario)
           );
           return { ...usuario, sistemas };
         })

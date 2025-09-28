@@ -66,7 +66,7 @@ export class ReportService {
           // Comissaos
           const comissoes = this.getComissaoByDate(consultorFaturas, months);
 
-          // Unir receitaLiquidas y comissoes en una sola estructura
+          // Merge of receitaLiquidas and comissoes in a single structure
           const info = months.map((m) => {
             const receita =
               receitaLiquidas.find(
@@ -81,7 +81,7 @@ export class ReportService {
               month: m.month,
               year: m.year,
               receitaLiquida: receita,
-              // Tomamos el salario fijo de la primera factura (es el mismo para todas)
+              // Salary of first entry (is the same for all)
               salarioFixo: consultorFaturas[0]?.salarioFixo ?? 0,
               comissao: comissao,
               lucro:
@@ -114,7 +114,7 @@ export class ReportService {
       map(([faturas, ordens, salarios]) => {
         if (!faturas || !ordens || !salarios) return [];
 
-        // Enriquecer facturas con consultor
+        // Enrich faturas with consultors
         const enriched = faturas.map((fat) => {
           const os = ordens.find((orden) => orden.co_os === fat.co_os);
 
@@ -129,7 +129,7 @@ export class ReportService {
           };
         });
 
-        // Filtrar por consultor
+        // Filter by consultor
         return enriched.filter((fat) => fat.co_usuario === consultor);
       })
     );

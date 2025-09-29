@@ -63,8 +63,8 @@
             </span>
             }
           </mat-select-trigger>
-          @for (cs of consultors(); track cs) {
-          <mat-option [value]="cs">{{ cs }}</mat-option>
+          @for (cs of consultors(); track $index) {
+          <mat-option [value]="cs">{{ cs.NO_USUARIO }}</mat-option>
           }
         </mat-select>
       </mat-form-field>

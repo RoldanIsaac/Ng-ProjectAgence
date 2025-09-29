@@ -73,11 +73,19 @@ export class AgenceTableComponent implements OnInit, OnDestroy {
   // ------------------------------------------------------------------------------------------
 
   getTotal(column: string): number {
-    return this.dataSource.data
-      .map((item) => {
-        const value = Number(item[column]) || 0;
-        return value;
-      })
-      .reduce((acc, val) => acc + val, 0);
+    const columnMap: Record<string, string> = {
+      'Receita Líquida': 'receitaLiquida',
+      'Custo Fixo': 'fixedSalary',
+      Comissão: 'comissao',
+      Lucro: 'lucro',
+    };
+
+    const field = columnMap[column];
+    if (!field) return 0;
+
+    return this.dataSource.data.reduce(
+      (acc, item) => acc + (Number(item[field]) || 0),
+      0
+    );
   }
 }

@@ -26,7 +26,6 @@ import { ChartReportComponent } from '../../components/chart-report/chart-report
 import { PieReportComponent } from '../../components/pie-report/pie-report.component';
 import { cols, sortables } from '../../../../core/constants/tables';
 import { TabButtonComponent } from '../../../../components/tab-button/tab-button.component';
-import { MockDataService } from '../../../../api/mock-data.service';
 import { format } from 'date-fns';
 import { dateFormatBr } from '../../../../core/constants/date';
 import { DateRange } from '../../../../core/interfaces/date';
@@ -89,7 +88,7 @@ export class AgenceComponent implements OnInit, OnDestroy {
 
   // Forms & Filters
   consultorsFC = new FormControl('');
-  consultors = signal<string[]>([]);
+  consultors = signal<any[]>([]);
   selectedConsultors = signal<string[]>([]);
   // Date range picker
   readonly range = new FormGroup({
@@ -104,10 +103,7 @@ export class AgenceComponent implements OnInit, OnDestroy {
   // Report data
   reportsData = signal<any[]>([]);
 
-  constructor(
-    private reportService: ReportService,
-    private mockService: MockDataService
-  ) {}
+  constructor(private reportService: ReportService) {}
 
   // ------------------------------------------------------------------------------------------
   // @ Lifecycle Hooks
@@ -153,22 +149,14 @@ export class AgenceComponent implements OnInit, OnDestroy {
    * Fetching consultants
    */
   getConsultants(): void {
-    // this.reportService
-    //   .getConsultants()
-    //   .subscribe((cs) => (this.consultants = cs as any));
-
-    this.mockService
+    this.reportService
       .getConsultors()
       .pipe(take(1))
       .subscribe({
         next: (consultors) => {
-          if (consultors?.length > 0) {
-            // Debug
-            // console.log(consultors);
-            this.consultors.set(
-              consultors.map((consultor) => consultor.no_usuario)
-            );
-          }
+          // console.log(consultors)  // Debug
+          if (!(consultors.data?.length > 0)) return;
+          this.consultors.set(consultors.data);
         },
         error: (err) => {
           console.error('Error fetching consultants:', err);
@@ -210,10 +198,10 @@ export class AgenceComponent implements OnInit, OnDestroy {
     // Generating report
     this.reportService
       .generateReport(this.selectedConsultors(), this.dateRange())
+      .pipe(take(1))
       .subscribe((res) => {
-        // Debug
-        // console.log(res);
-        this.reportsData.set(res);
+        // console.log(res); // Debug
+        this.reportsData.set(res.data);
         this.isGenerated.set(true);
       });
   }

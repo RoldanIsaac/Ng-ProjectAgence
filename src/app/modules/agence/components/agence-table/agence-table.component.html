@@ -18,11 +18,11 @@
       class="text-sm text-gray-700"
     >
       @if (column === 'Período') {
-      {{ item["month"] }}/{{ item["year"] }}
+      {{ item["month"] }}
       } @else if (column === 'Receita Líquida') {
       {{ item["receitaLiquida"] | brCurrency }}
       } @else if (column === 'Custo Fixo') {
-      {{ item["salarioFixo"] | brCurrency }}
+      {{ item["fixedSalary"] | brCurrency }}
       } @else if (column === 'Comissão') {
       {{ item["comissao"] | brCurrency }}
       } @else if (column === 'Lucro') {

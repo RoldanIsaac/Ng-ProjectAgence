@@ -31,6 +31,8 @@ import { dateFormatBr } from '../../../../core/constants/date';
 import { DateRange } from '../../../../core/interfaces/date';
 import { tabs } from '../../../../core/constants/tabs';
 import { ReportService } from '../../../../services/report.service';
+import { MockDataService } from '../../../../api/mock-data.service';
+import { Usuario } from '../../../../core/interfaces/common';
 
 const MATERIAL_MODULES = [
   MatSelectModule,
@@ -89,7 +91,7 @@ export class AgenceComponent implements OnInit, OnDestroy {
   // Forms & Filters
   consultorsFC = new FormControl('');
   consultors = signal<any[]>([]);
-  selectedConsultors = signal<string[]>([]);
+  selectedConsultors = signal<Usuario[]>([]);
   // Date range picker
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -102,8 +104,12 @@ export class AgenceComponent implements OnInit, OnDestroy {
 
   // Report data
   reportsData = signal<any[]>([]);
+  isMockData: boolean = true;
 
-  constructor(private reportService: ReportService) {}
+  constructor(
+    private reportService: ReportService,
+    private mockService: MockDataService
+  ) {}
 
   // ------------------------------------------------------------------------------------------
   // @ Lifecycle Hooks
@@ -149,19 +155,20 @@ export class AgenceComponent implements OnInit, OnDestroy {
    * Fetching consultants
    */
   getConsultants(): void {
-    this.reportService
-      .getConsultors()
-      .pipe(take(1))
-      .subscribe({
-        next: (consultors) => {
-          // console.log(consultors)  // Debug
-          if (!(consultors.data?.length > 0)) return;
-          this.consultors.set(consultors.data);
-        },
-        error: (err) => {
-          console.error('Error fetching consultants:', err);
-        },
-      });
+    const db$ = this.isMockData
+      ? this.mockService.getConsultors()
+      : this.reportService.getConsultors();
+
+    db$.pipe(take(1)).subscribe({
+      next: (consultors) => {
+        // console.log(consultors)  // Debug
+        if (!(consultors.data?.length > 0)) return;
+        this.consultors.set(consultors.data);
+      },
+      error: (err) => {
+        console.error('Error fetching consultants:', err);
+      },
+    });
   }
 
   // ------------------------------------------------------------------------------------------
@@ -195,14 +202,23 @@ export class AgenceComponent implements OnInit, OnDestroy {
       console.warn('No consultors selected.');
     }
 
+    console.log(this.selectedConsultors());
+
     // Generating report
-    this.reportService
-      .generateReport(this.selectedConsultors(), this.dateRange())
-      .pipe(take(1))
-      .subscribe((res) => {
-        // console.log(res); // Debug
-        this.reportsData.set(res.data);
-        this.isGenerated.set(true);
-      });
+    const db$ = this.isMockData
+      ? this.mockService.generateReport(
+          this.selectedConsultors(),
+          this.dateRange()
+        )
+      : this.reportService.generateReport(
+          this.selectedConsultors(),
+          this.dateRange()
+        );
+
+    db$.pipe(take(1)).subscribe((res) => {
+      console.log(res); // Debug
+      this.reportsData.set(res.data);
+      this.isGenerated.set(true);
+    });
   }
 }

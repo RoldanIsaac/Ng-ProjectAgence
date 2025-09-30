@@ -1,13 +1,12 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DateRange } from '../core/interfaces/date';
-import { DateUtilsService } from '../services/date-utils.service';
+import { Usuario } from '../core/interfaces/common';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
-  private apiUrl = 'http://localhost/agence-api/api';
-  dateUtils = inject(DateUtilsService);
+  private apiUrl = 'http://agence-api.gt.tc/agence-api/api';
 
   constructor(private http: HttpClient) {}
 
@@ -27,7 +26,7 @@ export class ReportService {
    * @description
    * Generate the report for given consultors and date range
    */
-  generateReport(consultors: string[], dateRange: DateRange): Observable<any> {
+  generateReport(consultors: Usuario[], dateRange: DateRange): Observable<any> {
     const body = {
       consultors: consultors,
       dateStart: dateRange.from,

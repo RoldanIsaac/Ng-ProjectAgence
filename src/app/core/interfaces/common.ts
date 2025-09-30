@@ -42,7 +42,7 @@ export interface PermissaoSistema {
 
 export interface Os {
   co_os: number;
-  co_usuario: number;
+  co_usuario: string;
 }
 
 export interface CaoSalario {
@@ -53,17 +53,17 @@ export interface CaoSalario {
 }
 
 export interface Fatura {
-  co_fatura: number;
-  co_cliente: number;
-  co_sistema: number;
-  co_os: number;
-  num_nf: number;
-  total: number;
-  valor: number;
+  co_fatura: string;
+  co_cliente: string;
+  co_sistema: string;
+  co_os: string;
+  num_nf: string;
+  total: string;
+  valor: string;
   data_emissao: string;
   corpo_nf: string;
-  comissao_cn: number;
-  total_imp_inc: number;
+  comissao_cn: string;
+  total_imp_inc: string;
 }
 
 export interface FaturaEnriched extends Fatura {
@@ -84,7 +84,7 @@ export interface Comissao {
 }
 
 export interface OS {
-  co_os: number;
+  co_os: string;
   nu_os: number;
   co_sistema: number;
   co_usuario: string;

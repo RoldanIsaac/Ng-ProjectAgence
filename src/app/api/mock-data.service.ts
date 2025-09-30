@@ -34,6 +34,9 @@ export class MockDataService {
     return of(cao_os);
   }
 
+  /**
+   * Filter consultors according permissions
+   */
   getConsultors(): Observable<{
     success: boolean;
     data: any[];
@@ -85,7 +88,7 @@ export class MockDataService {
       throw new Error('Invalid date format. Must be dd/MM/yyyy');
     }
 
-    // Normalizar al primer día del mes
+    // Normalice to first day of month
     current.setDate(1);
     end.setDate(1);
 
@@ -94,7 +97,7 @@ export class MockDataService {
       const month = String(current.getMonth() + 1).padStart(2, '0');
       months.push(`${year}-${month}`);
 
-      // Avanzar al siguiente mes
+      // Move to next month
       current.setMonth(current.getMonth() + 1);
     }
 
@@ -111,7 +114,7 @@ export class MockDataService {
     const [year, monthNum] = month.split('-');
     const startDate = `${year}-${monthNum}-01`;
 
-    // Calcular último día del mes
+    // Calculate the last day of the month
     const lastDay = new Date(Number(year), Number(monthNum), 0).getDate();
     const endDate = `${year}-${monthNum}-${String(lastDay).padStart(2, '0')}`;
 
@@ -125,22 +128,22 @@ export class MockDataService {
         let receitaLiquida = 0;
         let comissao = 0;
 
-        // Filtrar órdenes de servicio del consultor
+        // Filter service orders of the consultant
         const ordersOfConsultor = orders.filter(
           (order: Os) => order.co_usuario == consultorCode
         );
 
-        // Obtener los códigos de OS del consultor
+        // Get the OS codes of the consultant
         const consultorOsCodes = ordersOfConsultor.map(
           (order: Os) => order.co_os
         );
 
-        console.log('Orders del consultor:', ordersOfConsultor);
-        console.log('Códigos de OS:', consultorOsCodes);
+        console.log('Orders of the consultant:', ordersOfConsultor);
+        console.log('Consultant OS codes:', consultorOsCodes);
 
-        // Filtrar facturas que cumplan TODAS las condiciones:
-        // 1. Están en el rango de fechas del mes
-        // 2. Pertenecen a una OS del consultor
+        // Filter invoices that meet ALL conditions:
+        // 1. Are within the date range of the month
+        // 2. Belong to a consultant's OS
         const faturasDelMes = faturas.filter((fatura: any) => {
           let dataEmissao = fatura.data_emissao;
           if (dataEmissao && dataEmissao.toString().startsWith('0x')) {
@@ -155,15 +158,15 @@ export class MockDataService {
           return isInDateRange && isConsultorOS;
         });
 
-        console.log('Facturas del mes filtradas:', faturasDelMes);
+        console.log('Filtered invoices of the month:', faturasDelMes);
 
-        // Calcular VALOR total de todas las facturas
+        // Calculate TOTAL VALUE of all invoices
         valorTotal = faturasDelMes.reduce((sum: number, fatura: any) => {
           const valor = Number(fatura.valor) || 0;
           return sum + valor;
         }, 0);
 
-        // Calcular TOTAL_IMP_INC total
+        // Calculate TOTAL_IMP_INC (total taxes)
         totalImpuestos = faturasDelMes.reduce((sum: number, fatura: any) => {
           const valor = Number(fatura.valor) || 0;
           const impuestoPorcentaje = Number(fatura.total_imp_inc) || 0;
@@ -171,25 +174,25 @@ export class MockDataService {
           return sum + montoImpuesto;
         }, 0);
 
-        // RECEITA LIQUIDA = VALOR - TOTAL_IMP_INC
+        // NET REVENUE = VALUE - TOTAL_IMP_INC
         receitaLiquida = valorTotal - totalImpuestos;
 
-        // Calcular COMISIÓN total
+        // Calculate total COMMISSION
         comissao = faturasDelMes.reduce((sum: number, fatura: any) => {
           const valor = Number(fatura.valor) || 0;
-          const totalImpInc = Number(fatura.total_imp_inc) || 0; // porcentaje
-          const comissaoCn = Number(fatura.comissao_cn) || 0; // porcentaje
+          const totalImpInc = Number(fatura.total_imp_inc) || 0; // percentage
+          const comissaoCn = Number(fatura.comissao_cn) || 0; // percentage
 
-          // Valor neto después de impuestos
+          // Net value after taxes
           const valorLiquido = valor - (valor * totalImpInc) / 100;
 
-          // Comisión de esta factura
+          // Commission of this invoice
           const comissaoFatura = (valorLiquido * comissaoCn) / 100;
 
           return sum + comissaoFatura;
         }, 0);
 
-        console.log('Cálculos:', {
+        console.log('Calculations:', {
           valorTotal,
           totalImpuestos,
           receitaLiquida,
@@ -203,7 +206,7 @@ export class MockDataService {
           receitaLiquida,
           comissao,
           cantidadFacturas: faturasDelMes.length,
-          facturas: faturasDelMes, // para debugging
+          facturas: faturasDelMes, // for debugging
         };
       })
     );
@@ -255,16 +258,16 @@ export class MockDataService {
 
       const months = this.getMonthsInRange(dateStart, dateEnd);
 
-      // Crear observables para cada consultor
+      // Create observables for each consultant
       const consultorReports$ = consultors.map((consultor) => {
-        // Crear observables para cada mes
+        // Create observables for each month
         const monthObservables$ = months.map((month) =>
           forkJoin({
             monthData: this.getMonthlyData(consultor.co_usuario, month),
             fixedSalary: this.getFixedSalary(consultor),
           }).pipe(
             map(({ monthData, fixedSalary }) => {
-              const lucro =
+              const profit =
                 monthData.receitaLiquida - (fixedSalary + monthData.comissao);
 
               return {
@@ -272,13 +275,13 @@ export class MockDataService {
                 receitaLiquida: monthData.receitaLiquida,
                 fixedSalary,
                 comissao: monthData.comissao,
-                lucro,
+                profit,
               };
             })
           )
         );
 
-        // Combinar todos los meses para este consultor
+        // Combine all months for this consultant
         return forkJoin(monthObservables$).pipe(
           map((monthsArray) => ({
             consultor: consultor,
@@ -287,7 +290,7 @@ export class MockDataService {
         );
       });
 
-      // Combinar todos los consultores
+      // Combine all consultants
       return forkJoin(consultorReports$).pipe(
         map((resultsFinal) => ({
           success: true,
@@ -296,10 +299,10 @@ export class MockDataService {
         }))
       );
     } catch (error) {
-      console.error('Error al obtener reportes:', error);
+      console.error('Error while generating reports:', error);
       return of({
         success: false,
-        error: `Error al obtener reportes: ${error}`,
+        error: `Error while generating reports: ${error}`,
       });
     }
   }

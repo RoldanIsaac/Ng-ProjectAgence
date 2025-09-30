@@ -89,7 +89,7 @@
         >
           <div>
             <h2 class="text-md font-semibold p-3 bg-gray-100 rounded-t-md">
-              Consultor: {{ data.consultor }}
+              Consultor: {{ data.consultor.no_usuario }}
             </h2>
           </div>
           <app-agence-table
@@ -102,7 +102,7 @@
 
       <!-- Chart Mode -->
       <ng-container *ngIf="isChartMode()">
-        <app-chart-report></app-chart-report>
+        <app-chart-report [data]="reportsData()"></app-chart-report>
       </ng-container>
 
       <!-- Pie Mode -->

@@ -3,6 +3,7 @@ import {
   HighchartsChartComponent,
   ChartConstructorType,
 } from 'highcharts-angular';
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-pie-report',
@@ -19,15 +20,7 @@ import {
   styleUrl: './pie-report.component.css',
 })
 export class PieReportComponent {
-  data = input.required<any[]>();
-
-  constructor() {
-    effect(() => {
-      if (this.data()) {
-        console.log(this.data());
-      }
-    });
-  }
+  data = input.required<any>();
 
   chartOptions: Highcharts.Options = {
     title: {
@@ -35,21 +28,42 @@ export class PieReportComponent {
     },
     series: [
       {
-        data: [
-          { name: 'Carlos Flavio Girao de Arruda', y: 5 },
-          { name: 'Mario Silvestri Filho', y: 4 },
-          { name: 'Carlos Henrique de Carvalho', y: 1 },
-        ],
-        dataLabels: {
-          enabled: true, // activa las etiquetas
-          format: '{point.name}: {point.y}', // formato de la etiqueta
-        },
-
         type: 'pie',
+        data: [], // starts empty
+        dataLabels: {
+          enabled: true,
+          format: '{point.name}: {point.y}',
+        },
       },
     ],
   };
+
   chartConstructor: ChartConstructorType = 'chart';
   updateFlag: boolean = false;
   oneToOneFlag: boolean = true;
+
+  constructor() {
+    effect(() => {
+      if (this.data()) {
+        // Tranform data
+        const seriesData = this.data().map((item: any) => ({
+          name: item.consultor.no_usuario,
+          y: item.info[0]?.receitaLiquida ?? 0,
+        }));
+
+        // Update chart options
+        (this.chartOptions.series as Highcharts.SeriesOptionsType[])[0] = {
+          type: 'pie',
+          data: seriesData,
+          dataLabels: {
+            enabled: true,
+            format: '{point.name}: {point.y}',
+          },
+        };
+
+        // Force update
+        this.updateFlag = true;
+      }
+    });
+  }
 }

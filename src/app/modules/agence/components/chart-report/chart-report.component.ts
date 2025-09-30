@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import {
   HighchartsChartComponent,
   ChartConstructorType,
@@ -19,6 +19,8 @@ import {
   styleUrl: './chart-report.component.css',
 })
 export class ChartReportComponent {
+  data = input.required<any>();
+
   chartOptions: Highcharts.Options = {
     title: {
       text: 'Performance Comercial',
